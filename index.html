@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -5,6 +6,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>이루당 | 사주와 운세</title>
 <meta name="description" content="이루당에서 나의 사주와 오늘의 운세를 확인해보세요.">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<script>document.documentElement.classList.add("txt-wait");setTimeout(function(){document.documentElement.classList.remove("txt-wait")},3000);</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
 
@@ -25,6 +30,7 @@ header{position:absolute;top:0;left:0;width:100%;z-index:10}
 .label{font-size:11px;letter-spacing:5px;color:#9b7659;margin-bottom:20px}
 h1{font-family:'Noto Serif KR',serif;font-size:clamp(43px,7vw,68px);line-height:1.35;letter-spacing:-4px;font-weight:600}
 h1 span{color:#956c4d}
+h1 span.hero-main{color:inherit}
 .description{margin:23px auto 35px;color:#786d64;font-size:15px;line-height:1.9}
 
 .saju-form{width:min(620px,100%);margin:auto;background:rgba(255,253,249,.90);backdrop-filter:blur(12px);border:1px solid #dfd2c4;padding:22px;box-shadow:0 18px 45px rgba(70,49,34,.07);text-align:left}
@@ -146,6 +152,10 @@ input:focus,select:focus{border-color:#a57d5d}
 .admin-login input{width:100%;height:46px;border:1px solid #ddd1c5;padding:0 12px}
 .admin-login button{width:100%;height:46px;margin-top:10px;border:0;background:#554036;color:#fff;cursor:pointer}
 .admin-msg{font-size:11px;color:#9b7659;margin-top:8px;min-height:16px}
+.admin-login .admin-close{width:auto;height:auto;margin:0;background:transparent;color:#8a7c71;font-size:22px;padding:0}
+.admin-ver{font-size:10px;color:#a99b90;margin-top:12px;line-height:1.5;word-break:keep-all}
+.admin-sync{font-size:11px;color:#7a6a5d;background:#f5eee6;border:1px solid #e8ded3;padding:8px 10px;margin:-8px 0 18px;line-height:1.5;word-break:keep-all}
+html.txt-wait [data-admin-key],html.txt-wait #siteDescription,html.txt-wait #footerNotice,html.txt-wait #resultNotice{visibility:hidden}
 
 </style>
 </head>
@@ -166,7 +176,7 @@ input:focus,select:focus{border-color:#a57d5d}
 <section class="hero" id="saju">
     <div class="hero-inner">
         <div class="label" data-admin-key="heroLabel">YOUR FATE · YOUR STORY</div>
-        <h1 data-admin-key="heroTitle">당신의 흐름을<br><span data-admin-key="heroTitleAccent">알아보는 시간</span></h1>
+        <h1><span class="hero-main" data-admin-key="heroTitle">당신의 흐름을</span><br><span data-admin-key="heroTitleAccent">알아보는 시간</span></h1>
         <p class="description" id="siteDescription">생년월일과 태어난 시간을 입력하고<br>나의 사주와 운세를 확인해보세요.</p>
 
         <div class="saju-form">
@@ -287,7 +297,7 @@ input:focus,select:focus{border-color:#a57d5d}
         </div>
 
         <div class="today-detail">
-            <h3>오늘의 사주</h3>
+            <h3 data-admin-key="todaySajuTitle">오늘의 사주</h3>
             <p id="todaySaju"></p>
         </div>
 
@@ -316,31 +326,22 @@ input:focus,select:focus{border-color:#a57d5d}
         <button class="admin-close" onclick="closeAdmin()">×</button>
         <h2>관리자 로그인</h2>
         <p>관리자 비밀번호를 입력해주세요.</p>
-        <input type="password" id="adminPassword" placeholder="비밀번호">
-        <button onclick="adminLogin()">관리자 페이지 들어가기</button>
+        <input type="password" id="adminPassword" placeholder="비밀번호" autocomplete="current-password">
+        <button id="adminLoginBtn" onclick="adminLogin()">관리자 페이지 들어가기</button>
         <div class="admin-msg" id="adminMsg"></div>
+        <div class="admin-ver" id="adminVer"></div>
     </div>
 
     <div class="admin-box" id="adminEditBox" style="display:none">
         <button class="admin-close" onclick="closeAdmin()">×</button>
         <h2>사이트 문구 관리</h2>
-        <div class="admin-sub">사이트에 표시되는 주요 문구를 수정하고 저장할 수 있습니다. 저장된 내용은 이 브라우저에 보관됩니다.</div>
+        <div class="admin-sub">사이트에 표시되는 주요 문구를 수정하고 저장할 수 있습니다. 저장하면 PC·모바일 등 모든 기기에 바로 반영됩니다.</div>
+        <div class="admin-sync" id="adminSync"></div>
 
         <div class="admin-field">
             <label>하단 안내 문구</label>
             <textarea id="adminFooterText"></textarea>
         </div>
-
-        <div class="admin-field">
-            <label>사이트 설명 문구</label>
-            <textarea id="adminDescription"></textarea>
-        </div>
-
-        <div class="admin-field">
-            <label>결과 안내 문구</label>
-            <textarea id="adminResultNotice"></textarea>
-        </div>
-
 
         <div class="admin-section-title">홈페이지 문구</div>
         <div class="admin-field"><label>상단 작은 문구</label><input type="text" id="adminHeroLabel"></div>
@@ -384,7 +385,7 @@ input:focus,select:focus{border-color:#a57d5d}
 
         <div class="admin-field"><label>결과 안내 문구</label><textarea id="adminResultNotice"></textarea></div>
         <div class="admin-actions">
-            <button class="save" onclick="saveAdminText()">저장하기</button>
+            <button class="save" id="adminSaveBtn" onclick="saveAdminText()">저장하기</button>
             <button onclick="resetAdminText()">기본 문구로 복원</button>
             <button onclick="closeAdmin()">닫기</button>
         </div>
@@ -575,7 +576,44 @@ function quickResult(type){
     result.scrollIntoView({behavior:"smooth"});
 }
 
-const ADMIN_PASSWORD="1234";
+</script>
+
+<script type="module">
+/* =========================================================
+   이루당 관리자 문구 v2 - Firebase 실시간 동기화
+   · 문구는 오직 Firestore(site/texts) 한 곳에만 저장
+   · 기기별 저장(localStorage)은 전부 제거 → PC·모바일 항상 같은 문구
+   · 실시간 반영: 한 기기에서 저장하면 열려 있는 다른 기기도 바로 바뀜
+   ========================================================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+import { initializeFirestore, doc, getDocFromServer, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const CODE_VERSION = "v4 · settings/siteText";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBHtuH8xYT-9Atnn9_vc2_d-WGGzCHl-b0",
+    authDomain: "saju09260926.firebaseapp.com",
+    projectId: "saju09260926",
+    storageBucket: "saju09260926.firebasestorage.app",
+    messagingSenderId: "1011500823552",
+    appId: "1:1011500823552:web:9d9453bbd3fd9c4b0954e5",
+    measurementId: "G-HNNEZYW4SC"
+};
+
+const app = initializeApp(firebaseConfig);
+isSupported().then(ok => { if (ok) getAnalytics(app); }).catch(() => {});
+// 카카오톡·인스타 인앱 브라우저, 일부 모바일 통신망에서도 끊기지 않도록 롱폴링 사용
+const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+
+/* ▼ 관리자 비밀번호 (원하는 값으로 바꿔 쓰세요) */
+const ADMIN_PASSWORD = "1234";
+let isAdmin = false;
+
+const TEXT_DOC = doc(db, "settings", "siteText");   // 규칙의 match /settings/siteText 와 같은 위치
+
+// 예전 버전이 기기마다 따로 저장해두던 데이터 삭제 (따로 노는 원인)
+["irudang_admin_texts","irudang_texts_cache"].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e){} });
 
 const defaultAdminTexts={
     heroLabel:"YOUR FATE · YOUR STORY",
@@ -630,93 +668,154 @@ const adminFieldMap={
     backButton:"adminBackButton",footer:"adminFooterText",resultNotice:"adminResultNotice"
 };
 
-function getAdminTexts(){
-    const saved=JSON.parse(localStorage.getItem("irudang_admin_texts")||"null");
-    return Object.assign({},defaultAdminTexts,saved||{});
+const $ = id => document.getElementById(id);
+const esc = t => String(t??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+const toHtml = t => esc(t).replace(/\n/g,"<br>");
+const withDefaults = d => Object.assign({}, defaultAdminTexts, d || {});
+function setMsg(id, text){ const el=$(id); if(el) el.textContent=text; }
+function fmtTime(ts){
+    if(!ts || !ts.toDate) return "-";
+    const d=ts.toDate(), p=n=>String(n).padStart(2,"0");
+    return d.getFullYear()+"."+p(d.getMonth()+1)+"."+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes())+":"+p(d.getSeconds());
 }
 
+let serverState = { connected:false, updatedAt:null, error:"" };
+function renderStatus(){
+    const line = serverState.error
+        ? "⚠ 서버 연결 실패: "+serverState.error
+        : serverState.connected
+            ? "● 서버 연결됨 · 마지막 저장: "+fmtTime(serverState.updatedAt)
+            : "○ 서버 연결 중...";
+    ["adminVer","adminSync"].forEach(id=>{ const el=$(id); if(el) el.textContent=CODE_VERSION+"  |  "+line; });
+}
+
+function revealTexts(){ document.documentElement.classList.remove("txt-wait"); }
+
+/* ---------- 화면에 문구 적용 ---------- */
 function applyAdminTexts(data){
-    Object.keys(adminFieldMap).forEach(key=>{
-        const id=adminFieldMap[key], el=document.getElementById(id);
-        if(el) el.value=data[key]??"";
-    });
     document.querySelectorAll("[data-admin-key]").forEach(el=>{
         const key=el.dataset.adminKey;
-        if(data[key]!==undefined) el.innerHTML=data[key].replace(/\n/g,"<br>");
+        if(typeof data[key]==="string") el.innerHTML=toHtml(data[key]);
     });
-    if(document.getElementById("heroTitleAccent")) document.getElementById("heroTitleAccent").textContent=data.heroTitleAccent||"";
-    const hero=document.getElementById("heroTitle"); if(hero) hero.firstChild.textContent=(data.heroTitle||"")+"\n";
-    if(document.getElementById("siteDescription")) document.getElementById("siteDescription").innerHTML=(data.description||"").replace(/\n/g,"<br>");
-    if(document.getElementById("footerNotice")) document.getElementById("footerNotice").textContent=data.footer||"";
-    if(document.getElementById("resultNotice")) document.getElementById("resultNotice").innerHTML=(data.resultNotice||"").replace(/\n/g,"<br>");
+    if($("siteDescription")) $("siteDescription").innerHTML=toHtml(data.description);
+    if($("footerNotice")) $("footerNotice").textContent=data.footer||"";
+    if($("resultNotice")) $("resultNotice").innerHTML=toHtml(data.resultNotice);
     ["namePlaceholder","birthPlaceholder","genderPlaceholder","timePlaceholder"].forEach(key=>{
         const el=document.querySelector("[data-admin-placeholder='"+key+"']");
         if(el) el.placeholder=data[key]||"";
     });
 }
 
-function loadAdminTexts(){
-    const data=getAdminTexts();
-    applyAdminTexts(data);
-    return data;
-}
-
 function fillAdminFields(data){
     Object.keys(adminFieldMap).forEach(key=>{
-        const el=document.getElementById(adminFieldMap[key]);
+        const el=$(adminFieldMap[key]);
         if(el) el.value=data[key]??"";
     });
 }
 
+/* ---------- 실시간 구독: 서버 문구가 바뀌면 모든 기기에 즉시 반영 ---------- */
+onSnapshot(TEXT_DOC, { includeMetadataChanges:false }, snap=>{
+    const d = snap.exists() ? snap.data() : null;
+    applyAdminTexts(withDefaults(d && d.texts));
+    serverState = { connected:!snap.metadata.fromCache, updatedAt:d && d.updatedAt, error:"" };
+    renderStatus();
+    revealTexts();
+}, err=>{
+    console.error("문구 불러오기 실패:", err);
+    serverState.error = err.code || err.message;
+    renderStatus();
+    applyAdminTexts(defaultAdminTexts);
+    revealTexts();
+});
+setTimeout(revealTexts, 3000); // 연결이 늦어도 3초 뒤엔 화면 표시
+
+/* ---------- 관리자 ---------- */
 function openAdminLogin(check){
     if(!check.checked) return;
-    document.getElementById("adminPanel").style.display="flex";
-    document.getElementById("adminLoginBox").style.display="block";
-    document.getElementById("adminEditBox").style.display="none";
-    document.getElementById("adminPassword").value="";
-    document.getElementById("adminMsg").textContent="";
-    setTimeout(()=>document.getElementById("adminPassword").focus(),50);
+    $("adminPanel").style.display="flex";
+    $("adminLoginBox").style.display="block";
+    $("adminEditBox").style.display="none";
+    $("adminPassword").value="";
+    setMsg("adminMsg","");
+    renderStatus();
+    setTimeout(()=>$("adminPassword").focus(),50);
 }
 
-function adminLogin(){
-    const password=document.getElementById("adminPassword").value;
-    if(password!==ADMIN_PASSWORD){
-        document.getElementById("adminMsg").textContent="비밀번호가 올바르지 않습니다.";
-        return;
+async function adminLogin(){
+    const password=$("adminPassword").value;
+    if(!password){ setMsg("adminMsg","비밀번호를 입력해주세요."); return; }
+    if(password!==ADMIN_PASSWORD){ setMsg("adminMsg","비밀번호가 올바르지 않습니다."); return; }
+    isAdmin=true;
+    setMsg("adminMsg","불러오는 중...");
+
+    // 편집창은 항상 '서버에 있는 최신 문구'로 채움
+    try{
+        const snap=await getDocFromServer(TEXT_DOC);
+        const d=snap.exists()?snap.data():null;
+        fillAdminFields(withDefaults(d && d.texts));
+        serverState={connected:true, updatedAt:d && d.updatedAt, error:""};
+        setMsg("saveMsg","");
+    }catch(e){
+        console.error(e);
+        setMsg("saveMsg","⚠ 서버에서 문구를 불러오지 못했습니다 ("+(e.code||e.message)+"). 저장하지 말고 새로고침 후 다시 시도해주세요.");
     }
-    const data=loadAdminTexts();
-    fillAdminFields(data);
-    document.getElementById("adminLoginBox").style.display="none";
-    document.getElementById("adminEditBox").style.display="block";
+    renderStatus();
+    $("adminLoginBox").style.display="none";
+    $("adminEditBox").style.display="block";
 }
 
-function saveAdminText(){
+async function saveAdminText(){
+    if(!isAdmin){ setMsg("saveMsg","다시 로그인해주세요."); return; }
     const data={};
     Object.keys(adminFieldMap).forEach(key=>{
-        const el=document.getElementById(adminFieldMap[key]);
-        data[key]=el?el.value:key;
+        const el=$(adminFieldMap[key]);
+        data[key]=el?el.value:(defaultAdminTexts[key]||"");
     });
-    localStorage.setItem("irudang_admin_texts",JSON.stringify(data));
-    applyAdminTexts(data);
-    document.getElementById("saveMsg").textContent="모든 문구가 저장되었습니다.";
+    const btn=$("adminSaveBtn");
+    btn.disabled=true; setMsg("saveMsg","서버에 저장 중...");
+    try{
+        await setDoc(TEXT_DOC,{texts:data, updatedAt:serverTimestamp()});
+        // 서버에서 다시 읽어 실제로 저장됐는지 확인
+        const snap=await getDocFromServer(TEXT_DOC);
+        serverState={connected:true, updatedAt:snap.data().updatedAt, error:""};
+        renderStatus();
+        setMsg("saveMsg","✓ 서버 저장 완료 ("+fmtTime(serverState.updatedAt)+") — PC·모바일 모든 기기에 반영됩니다.");
+    }catch(e){
+        console.error(e);
+        if((e.code||"").includes("permission-denied")){
+            setMsg("saveMsg","저장이 거부되었습니다. Firestore 규칙을 확인해주세요.");
+        alert("⚠ 서버 저장 실패 (권한 거부)\nFirestore 규칙에 match /settings/siteText 가 게시됐는지 확인해주세요.\n이 기기에만 보이고 다른 기기에는 반영되지 않습니다.");
+        }else{
+            setMsg("saveMsg","저장 실패 ("+(e.code||e.message)+")");
+            alert("⚠ 서버 저장 실패: "+(e.code||e.message));
+        }
+    }finally{
+        btn.disabled=false;
+    }
 }
 
-function resetAdminText(){
-    if(!confirm("모든 문구를 기본 문구로 복원할까요?")) return;
-    localStorage.removeItem("irudang_admin_texts");
-    const data=getAdminTexts();
-    fillAdminFields(data);
-    applyAdminTexts(data);
-    document.getElementById("saveMsg").textContent="기본 문구로 복원되었습니다.";
+async function resetAdminText(){
+    if(!confirm("모든 문구를 기본 문구로 복원할까요?\n(모든 기기에 적용됩니다)")) return;
+    if(!isAdmin){ setMsg("saveMsg","다시 로그인해주세요."); return; }
+    try{
+        await setDoc(TEXT_DOC,{texts:Object.assign({},defaultAdminTexts), updatedAt:serverTimestamp()});
+        fillAdminFields(defaultAdminTexts);
+        setMsg("saveMsg","기본 문구로 복원되었습니다. (모든 기기 적용)");
+    }catch(e){
+        console.error(e);
+        setMsg("saveMsg","복원 실패 ("+(e.code||e.message)+")");
+    }
 }
 
 function closeAdmin(){
-    document.getElementById("adminPanel").style.display="none";
-    document.getElementById("adminCheck").checked=false;
+    $("adminPanel").style.display="none";
+    $("adminCheck").checked=false;
+    isAdmin=false;
 }
 
-document.addEventListener("DOMContentLoaded",loadAdminTexts);
-
+Object.assign(window,{openAdminLogin,adminLogin,saveAdminText,resetAdminText,closeAdmin});
+$("adminPassword").addEventListener("keydown",e=>{ if(e.key==="Enter") adminLogin(); });
+renderStatus();
 </script>
 
 </body>
